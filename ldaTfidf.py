@@ -8,14 +8,18 @@ import requests
 from bs4 import BeautifulSoup
 import pprint
 
+#読み込む記事
+target_url = ["http://news.livedoor.com/article/detail/14828284/","http://news.livedoor.com/article/detail/14827796/","http://news.livedoor.com/article/detail/14822616/","http://news.livedoor.com/article/detail/14778172/","http://news.livedoor.com/article/detail/14759605/"]
+
 #記事読み込み
-target_url = "http://news.livedoor.com/article/detail/14825952/"
-r = requests.get(target_url)   
-soup = BeautifulSoup(r.text, 'lxml')
-texts = []
-#記事の文章を取得
-for p in soup.find_all('p'):
-    texts.append(p.string)
+for url in target_url:
+    r = requests.get(url)   
+    soup = BeautifulSoup(r.text, 'lxml')
+    texts = []
+    #記事の文章を取得
+    for p in soup.find_all('p'):
+        texts.append(p.string)
+
 
 #取得したpタグの文字列の中でNone型を取り除く
 filterdArray = []
@@ -59,20 +63,27 @@ for i, line in enumerate(filteredText):
     
     words += [fixedList]
 
+print(words)
 
+
+
+
+
+
+"""
 #辞書作成
 dictionary = corpora.Dictionary(words)
 #コーパス作成
 corpus = [dictionary.doc2bow(text) for text in words]
 
 #LDA
-estimatedTopics = 4
+estimatedTopics = 7
 ldaModel = gensim.models.ldamodel.LdaModel(corpus=corpus, num_topics=estimatedTopics, id2word=dictionary)
 
 for i in range(estimatedTopics):
     print('トピック:', i, '__', ldaModel.print_topic(i))
 
-
+"""
 
 
 

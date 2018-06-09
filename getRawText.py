@@ -5,8 +5,7 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 import requests
 from bs4 import BeautifulSoup
 
-#target_url = 'http://news.livedoor.com/article/detail/14827931/'
-target_url = "http://news.livedoor.com/article/detail/14827796/"
+target_url = "http://news.livedoor.com/article/detail/14828284/"
 
 r = requests.get(target_url)   
 soup = BeautifulSoup(r.text, 'lxml')
