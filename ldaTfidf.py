@@ -12,13 +12,24 @@ import pprint
 target_url = ["http://news.livedoor.com/article/detail/14828284/","http://news.livedoor.com/article/detail/14827796/","http://news.livedoor.com/article/detail/14822616/","http://news.livedoor.com/article/detail/14778172/","http://news.livedoor.com/article/detail/14759605/"]
 
 #記事読み込み
+texts = []
+#各URL
 for url in target_url:
+    #テキスト取得
     r = requests.get(url)   
     soup = BeautifulSoup(r.text, 'lxml')
-    texts = []
-    #記事の文章を取得
+    
+    sentBox = []
+    sentPart = []
+    #テキストの中のpタグの繰り返し処理
     for p in soup.find_all('p'):
-        texts.append(p.string)
+        #Noneを除外
+        if p.string != None:
+            sentBox.append(p.string)
+    #リストを文字列に変換
+    sentPart = "".join(sentBox)
+    texts.append(sentPart)
+
 
 
 #取得したpタグの文字列の中でNone型を取り除く
@@ -30,9 +41,13 @@ for text in texts:
 #リストから文字列に変換
 filterdSentence = ''.join(filterdArray)
 
+
+
 #文字列からリストに変換
 filteredText = filterdSentence.split("。")
 filteredText.remove('')
+
+
 
 #形態素解析準備
 from janome.tokenizer import Tokenizer
@@ -63,14 +78,7 @@ for i, line in enumerate(filteredText):
     
     words += [fixedList]
 
-print(words)
 
-
-
-
-
-
-"""
 #辞書作成
 dictionary = corpora.Dictionary(words)
 #コーパス作成
@@ -82,11 +90,6 @@ ldaModel = gensim.models.ldamodel.LdaModel(corpus=corpus, num_topics=estimatedTo
 
 for i in range(estimatedTopics):
     print('トピック:', i, '__', ldaModel.print_topic(i))
-
-"""
-
-
-
 
 #LDAニュース記事増やす
 
