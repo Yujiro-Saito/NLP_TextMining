@@ -46,6 +46,9 @@ stoplist = ['ため','ごと','とおり','それ','これ','これら',"ころ"
 for sw in stoplist:
     stopwords.append(sw)
 
+
+
+
 #名詞の場合+ストップワード以外の場合リストに追加
 for i, line in enumerate(filteredText):
     word_vector = []

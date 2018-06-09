@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 import pprint
 
 #読み込む記事
-target_url = ["http://news.livedoor.com/article/detail/14828284/","http://news.livedoor.com/article/detail/14827796/","http://news.livedoor.com/article/detail/14822616/","http://news.livedoor.com/article/detail/14778172/","http://news.livedoor.com/article/detail/14759605/"]
+target_url = ["http://news.livedoor.com/article/detail/14831948/","http://news.livedoor.com/article/detail/14834387/","http://news.livedoor.com/article/detail/14835786/","http://news.livedoor.com/article/detail/14835890/","http://news.livedoor.com/article/detail/14838960/","http://news.livedoor.com/article/detail/14838961/","http://news.livedoor.com/article/detail/14838967/","http://news.livedoor.com/article/detail/14838738/","http://news.livedoor.com/article/detail/14839135/","http://news.livedoor.com/article/detail/14839195/","http://news.livedoor.com/article/detail/14839229/","http://news.livedoor.com/article/detail/14819625/","http://news.livedoor.com/article/detail/14836952/","http://news.livedoor.com/article/detail/14828284/","http://news.livedoor.com/article/detail/14827796/","http://news.livedoor.com/article/detail/14822616/","http://news.livedoor.com/article/detail/14778172/","http://news.livedoor.com/article/detail/14759605/"]
 
 #記事読み込み
 texts = []
@@ -30,43 +30,24 @@ for url in target_url:
     sentPart = "".join(sentBox)
     texts.append(sentPart)
 
-
-
-#取得したpタグの文字列の中でNone型を取り除く
-filterdArray = []
-for text in texts:
-    if text != None:
-        filterdArray.append(text)
-
-#リストから文字列に変換
-filterdSentence = ''.join(filterdArray)
-
-
-
-#文字列からリストに変換
-filteredText = filterdSentence.split("。")
-filteredText.remove('')
-
-
-
 #形態素解析準備
 from janome.tokenizer import Tokenizer
 t = Tokenizer()
 words = []
 
-#ストップワード読み込み+統合
+#ストップワード読み込み
 import codecs
 file = codecs.open('stopwords.txt', 'r', 'utf-8')
 lines = file.read()
 stopwords = lines.split("\n")
 stoplist = ['ため','ごと','とおり','それ','これ','これら',"ころ",'よう','こと','もの','の','さまざま','ほか','ん',
-            '高','費', '.', '℃',"われわれ",'百','千','万','億','円','等','用','月','日','年','その他','化','比','力',"自分",'的','当社','所','後','前',"1","2","3","4","5","6","7","8","9"]
-
+            '高','費',"つもり", '.', '℃',"われわれ",'百','千','万','億','円','等','用','月','日','年','その他','化','比','力',"自分",'的','当社','所','後','前',"1","2","3","4","5","6","7","8","9",","]
+#ストップワードの統合
 for sw in stoplist:
     stopwords.append(sw)
 
 #名詞の場合+ストップワード以外の場合リストに追加
-for i, line in enumerate(filteredText):
+for i, line in enumerate(texts):
     word_vector = []
     tokens = t.tokenize(line)
 
@@ -81,24 +62,12 @@ for i, line in enumerate(filteredText):
 
 #辞書作成
 dictionary = corpora.Dictionary(words)
+dictionary.filter_extremes(no_below=2, no_above=0.5)
 #コーパス作成
 corpus = [dictionary.doc2bow(text) for text in words]
 
 #LDA
-estimatedTopics = 7
+estimatedTopics = 10
 ldaModel = gensim.models.ldamodel.LdaModel(corpus=corpus, num_topics=estimatedTopics, id2word=dictionary)
-
 for i in range(estimatedTopics):
     print('トピック:', i, '__', ldaModel.print_topic(i))
-
-#LDAニュース記事増やす
-
-#Keywords Extraction
-#TF-IDF
-#============>20 news data at least
-
-#Similarity--=>
-
-#Text classification
-
-#Recommended
